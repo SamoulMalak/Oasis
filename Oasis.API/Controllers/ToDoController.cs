@@ -22,7 +22,7 @@ namespace Oasis.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateToDoAsync(Create_Update_ToDoDto item)
+        public async Task<IActionResult> CreateToDoAsync(CreateToDoDto item)
         {
            var result = await toDoServices.CreateToDoAsync(item);
             if (result)
@@ -44,12 +44,12 @@ namespace Oasis.API.Controllers
         }
 
         [HttpPut("{itemId:int}")]
-        public IActionResult UpdateToDoItem([FromBody] Create_Update_ToDoDto NewItem, int itemId)
+        public IActionResult UpdateToDoItem([FromBody] UpdateToDoDto updateItem)
         {
-            bool result = toDoServices.UpdateToDoItem(itemId, NewItem);
+            bool result = toDoServices.UpdateToDoItem(updateItem);
             if (result) 
             {
-                return Ok(NewItem);
+                return Ok(updateItem);
             }
             return BadRequest("Can't Edit this item");
         }

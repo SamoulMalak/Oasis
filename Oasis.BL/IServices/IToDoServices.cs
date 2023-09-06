@@ -9,11 +9,10 @@ namespace Oasis.BL.IServices
 {
     public interface IToDoServices
     {
-        Task<bool> CreateToDoAsync(Create_Update_ToDoDto toDoDto);
+        Task<bool> CreateToDoAsync(CreateToDoDto toDoDto);
         ViewToDoDto GetToDoItemById(int Id);
         bool DeleteToDo(int Id);
-
-        bool UpdateToDoItem(int Id, Create_Update_ToDoDto NewItem);
+        bool UpdateToDoItem(UpdateToDoDto UpdatedItem);
 
     }
 }

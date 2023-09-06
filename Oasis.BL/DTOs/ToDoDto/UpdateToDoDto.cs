@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Oasis.BL.DTOs.ToDoDto
 {
-    public class Create_Update_ToDoDto
+    public class UpdateToDoDto
     {
+        public int Id { get; set; }
         public string? Title { get; set; }
         public bool Completed { get; set; }
     }

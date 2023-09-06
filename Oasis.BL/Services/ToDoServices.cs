@@ -5,6 +5,8 @@ using Oasis.BL.DTOs.ToDoDto;
 using Oasis.BL.IServices;
 using Oasis.Data;
 using Oasis.Data.Entities;
+using Oasis.Data.IPersistance;
+using Oasis.Data.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,85 +17,87 @@ namespace Oasis.BL.Services
 {
     public class ToDoServices : IToDoServices
     {
-        private readonly DataContext context;
-        private readonly IMapper mapper;
+
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IToDoRepository _toDoRepository;
         private readonly UserManager<UserTable> userManager;
         private readonly SignInManager<UserTable> signInManager;
 
         public ToDoServices(DataContext context,
                             IMapper mapper,
                             UserManager<UserTable> userManager,
-                            SignInManager<UserTable> signInManager)
+                            SignInManager<UserTable> signInManager,
+                            IUnitOfWork unitOfWork,
+                            IToDoRepository toDoRepository)
         {
-            this.context = context;
-            this.mapper = mapper;
+
+            _mapper = mapper;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            _unitOfWork = unitOfWork;
+            _toDoRepository = toDoRepository;
         }
 
-        public async Task<bool> CreateToDoAsync(Create_Update_ToDoDto toDoitem)
+        public async Task<bool> CreateToDoAsync(CreateToDoDto toDoitem)
         {
-            var EntityItem = mapper.Map<ToDo>(toDoitem);
-            // get current user to get UserId column and put in ToDoEntity 
-             var CurrentUser =await userManager.GetUserAsync(signInManager.Context.User);
-            // this line will be edit in feature 
-            // EntityItem.UserId= CurrentUser.UserId;
+            try
+            {
+                var EntityItem = _mapper.Map<ToDo>(toDoitem);
+                // get current user to get UserId column and put in ToDoEntity 
+                var CurrentUser = await userManager.GetUserAsync(signInManager.Context.User);
+                // this line will be edit in feature 
+                EntityItem.UserId = CurrentUser.UserId;
 
-            EntityItem.UserId = 1;
-            context.ToDos.Add(EntityItem);
-            var result =context.SaveChanges();
-            return IsApplyOnDataBase(result);
-
+                _toDoRepository.Add(EntityItem);
+                _unitOfWork.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
 
         }
 
         public bool DeleteToDo(int Id)
         {
-            var Item = context.ToDos.FirstOrDefault(x => x.Id == Id);
-            if (Item != null)
+            try
             {
-                context.ToDos.Remove(Item);
-                var result =context.SaveChanges();
-                return IsApplyOnDataBase(result);
-            }
-            return false;
-        }
-
-        public ViewToDoDto GetToDoItemById(int Id)
-        {
-            var Item =context.ToDos.Find(Id);
-            var ItemDto =mapper.Map<ViewToDoDto>(Item);
-            return ItemDto;
-        }
-
-        public bool UpdateToDoItem(int Id, Create_Update_ToDoDto NewItem)
-        {
-            var ExistingItem = context.ToDos.Find(Id);
-
-            if (ExistingItem != null)
-            {
-                ExistingItem.Title = NewItem.Title;
-                ExistingItem.Completed = NewItem.Completed;
-             
-                var result = context.SaveChanges();
-                return IsApplyOnDataBase(result);
-            }
-            return false;
-         
-        }
-
-        // function to check if the data apply on database successfully or not 
-        // make this function to not repeat code 
-        private bool IsApplyOnDataBase(int result)
-        {
-            if (result > 0)
-            {
+                var Item = _toDoRepository.GetById(Id);
+                _toDoRepository.Delete(Item);
+                _unitOfWork.SaveChanges();
                 return true;
             }
-            else
+            catch 
             {
                 return false;
             }
         }
+
+        public ViewToDoDto GetToDoItemById(int Id)
+        {
+            var Item = _toDoRepository.GetById(Id);
+            var ItemDto = _mapper.Map<ViewToDoDto>(Item);
+            return ItemDto;
+        }
+
+        public bool UpdateToDoItem(UpdateToDoDto dto)
+        {
+            try
+            {
+                var model = _mapper.Map<ToDo>(dto);
+                _toDoRepository.Update(model);
+                _unitOfWork.SaveChanges();
+                return true;
+            }
+            catch 
+            {
+                return false;
+            }
+        }
+
+       
+     
     }
 }

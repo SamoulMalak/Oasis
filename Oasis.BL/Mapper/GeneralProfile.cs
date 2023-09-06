@@ -14,7 +14,8 @@ namespace Oasis.BL.Mapper
         public GeneralProfile()
         {
             CreateMap<ViewToDoDto,ToDo>().ReverseMap();
-            CreateMap<Create_Update_ToDoDto, ToDo>().ReverseMap();
+            CreateMap<CreateToDoDto, ToDo>().ReverseMap();
+            CreateMap<UpdateToDoDto, ToDo>().ReverseMap();
         }
     }
 }

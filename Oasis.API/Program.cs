@@ -8,6 +8,10 @@ using Oasis.BL.IServices;
 using Oasis.BL.Services;
 using Oasis.Data;
 using Oasis.Data.Entities;
+using Oasis.Data.IPersistance;
+using Oasis.Data.IRepositories;
+using Oasis.Data.Persistance;
+using Oasis.Data.Repositories;
 using System.Text;
 
 namespace Oasis.API
@@ -39,6 +43,10 @@ namespace Oasis.API
 
             //register Account Services 
             builder.Services.AddScoped<IAccountServices, AccountServices>();
+
+            builder.Services.AddScoped<IDbFactory, DbFactory>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IToDoRepository, ToDoRepository>();
 
             //register  ToDoServices 
             builder.Services.AddScoped<IToDoServices, ToDoServices>();
