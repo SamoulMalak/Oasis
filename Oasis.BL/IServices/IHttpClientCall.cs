@@ -9,6 +9,6 @@ namespace Oasis.BL.IServices
 {
     public interface IHttpClientCall
     {
-        Task<List<LiveToDoDto>> GetLiveToDoAsync();
+        Task<List<LiveToDoDto>> GetLiveToDoAsync(int pageNumber, int pageSize);
     }
 }

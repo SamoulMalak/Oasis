@@ -16,9 +16,9 @@ namespace Oasis.API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<LiveToDoDto>> GetLiveToDo() 
+        public async Task<List<LiveToDoDto>> GetLiveToDo(int pageNumber,int pageSize) 
         {
-            return await _httpClientCall.GetLiveToDoAsync();
+            return await _httpClientCall.GetLiveToDoAsync(pageNumber,pageSize);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Oasis.API.Controllers
     [Route("api/[controller]")]
     
     [ApiController]
-    
+    [Authorize]
     public class ToDoController : ControllerBase
     {
         private readonly IToDoServices toDoServices;

@@ -52,34 +52,36 @@ namespace Oasis.BL.Services
 
         public string CreateToken(UserTokenInfoDTO userTokenInfo)
         {
-           
-                var claims = new List<Claim>
+
+            var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email,userTokenInfo.UserEmail),
             new Claim(ClaimTypes.Name, userTokenInfo.UserName)
         };
 
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.Now.AddDays(7),
-                    SigningCredentials = creds,
-                    Issuer = configuration["Jwt:Issuer"]
-                };
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(7),
+                SigningCredentials = creds,
+                Issuer = configuration["Jwt:Issuer"]
+            };
 
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                return tokenHandler.WriteToken(token);
-            
-            
-                return null;
-            
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+
+
+
+
         }
 
-      
+       
+
+
 
         public async Task<string> UserLogInAsync(UserLogInDto logInDto)
         {
@@ -94,10 +96,14 @@ namespace Oasis.BL.Services
                     UserEmail = user.Email
                 };
                 string token = CreateToken(userTokenInfo);
+
+
                 return token;
             }
             else
+            {
                 return null;
+            }
            
 
         }

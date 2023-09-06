@@ -11,7 +11,7 @@ namespace Oasis.BL.Services
 {
     public class HttpClientCall : IHttpClientCall
     {
-        public async Task<List<LiveToDoDto>> GetLiveToDoAsync()
+        public async Task<List<LiveToDoDto>> GetLiveToDoAsync(int pageNumber,int pageSize)
         {
             var todos = new List<LiveToDoDto>();
             
@@ -27,12 +27,18 @@ namespace Oasis.BL.Services
                     
                     string jsonResult = await response.Content.ReadAsStringAsync();
                      todos = JsonConvert.DeserializeObject<List<LiveToDoDto>>(jsonResult);
-                    return todos;
+                     List<LiveToDoDto> pagedTodos = todos.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                     return pagedTodos;
                 }
 
 
             }
             return todos;
+           
+         
+
+           
+            
         }
     }
 }
