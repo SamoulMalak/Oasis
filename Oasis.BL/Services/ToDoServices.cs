@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Oasis.BL.DTOs.ToDoDto;
@@ -7,11 +8,7 @@ using Oasis.Data;
 using Oasis.Data.Entities;
 using Oasis.Data.IPersistance;
 using Oasis.Data.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Oasis.BL.Services
 {
@@ -21,31 +18,35 @@ namespace Oasis.BL.Services
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IToDoRepository _toDoRepository;
-        private readonly UserManager<UserTable> userManager;
-        private readonly SignInManager<UserTable> signInManager;
+        private readonly UserManager<UserTable> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ToDoServices(DataContext context,
                             IMapper mapper,
                             UserManager<UserTable> userManager,
                             SignInManager<UserTable> signInManager,
                             IUnitOfWork unitOfWork,
-                            IToDoRepository toDoRepository)
+                            IToDoRepository toDoRepository,
+                            IHttpContextAccessor httpContextAccessor)
         {
 
             _mapper = mapper;
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+            _userManager = userManager;
             _unitOfWork = unitOfWork;
             _toDoRepository = toDoRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
-
+        [Authorize]
         public async Task<bool> CreateToDoAsync(CreateToDoDto toDoitem)
         {
             try
             {
                 var EntityItem = _mapper.Map<ToDo>(toDoitem);
+                //
+
+                //
                 // get current user to get UserId column and put in ToDoEntity 
-                var CurrentUser = await userManager.GetUserAsync(signInManager.Context.User);
+                var CurrentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 // this line will be edit in feature 
                 EntityItem.UserId = CurrentUser.UserId;
 
@@ -96,8 +97,5 @@ namespace Oasis.BL.Services
                 return false;
             }
         }
-
-       
-     
     }
 }

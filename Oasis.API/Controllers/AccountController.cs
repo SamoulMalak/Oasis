@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Oasis.BL.DTOs.AccountDto;
 using Oasis.BL.IServices;
 
@@ -9,11 +8,11 @@ namespace Oasis.API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountServices accountServices;
+        private readonly IAccountServices _accountServices;
 
         public AccountController(IAccountServices accountServices)
         {
-            this.accountServices = accountServices;
+            _accountServices = accountServices;
         }
 
 
@@ -22,8 +21,12 @@ namespace Oasis.API.Controllers
         {
             if (userRegistrationDto != null)
             {
-                var token = await accountServices.UserRegistration(userRegistrationDto);
-                if (!string.IsNullOrEmpty(token))
+                if(await _accountServices.CheckEmailIsExistsAsync(userRegistrationDto.Email)) 
+                {
+                    return BadRequest("This Eamil is already used");
+                }
+                var token = await _accountServices.UserRegistration(userRegistrationDto);
+                 if (!string.IsNullOrEmpty(token))
                 {
                     return Ok(token);
                 }
@@ -38,7 +41,7 @@ namespace Oasis.API.Controllers
         {
             if (userLogIn != null)
             {
-                string token = await accountServices.UserLogInAsync(userLogIn);
+                string token = await _accountServices.UserLogInAsync(userLogIn);
                 if (!string.IsNullOrEmpty(token))
                 {
                     return Ok(token);

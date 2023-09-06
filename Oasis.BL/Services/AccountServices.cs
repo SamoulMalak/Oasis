@@ -1,43 +1,35 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Oasis.BL.DTOs.AccountDto;
 using Oasis.BL.DTOs.UserTokenInfo;
 using Oasis.BL.IServices;
 using Oasis.Data.Entities;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Oasis.BL.Services
 {
     public class AccountServices : IAccountServices
     {
-        private readonly IConfiguration configuration;
-        private readonly UserManager<UserTable> userManager;
-        private readonly SignInManager<UserTable> signInManager;
+        private readonly IConfiguration _configuration;
+        private readonly UserManager<UserTable> _userManager;
+        private readonly SignInManager<UserTable> _signInManager;
 
         public AccountServices(IConfiguration configuration,
                                UserManager<UserTable> userManager,
                                SignInManager<UserTable> signInManager)
         {
-            this.configuration = configuration;
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+             _configuration = configuration;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
-        /// <summary>
-        /// this function to check if email is exist or not 
-        /// </summary>
-        /// <param name="Email"></param>
-        /// <returns>true if this email is </returns>
+     
         public async Task<bool> CheckEmailIsExistsAsync(string Email)
         {
-            var result =await userManager.FindByEmailAsync(Email);
+            var result =await _userManager.FindByEmailAsync(Email);
             if (result == null) 
             {
                 return false;
@@ -59,7 +51,7 @@ namespace Oasis.BL.Services
             new Claim(ClaimTypes.Name, userTokenInfo.UserName)
         };
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -67,16 +59,12 @@ namespace Oasis.BL.Services
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds,
-                Issuer = configuration["Jwt:Issuer"]
+                Issuer = _configuration["Jwt:Issuer"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-
-
-
-
         }
 
        
@@ -85,9 +73,9 @@ namespace Oasis.BL.Services
 
         public async Task<string> UserLogInAsync(UserLogInDto logInDto)
         {
-            var user = await userManager.FindByEmailAsync(logInDto.Email);
+            var user = await _userManager.FindByEmailAsync(logInDto.Email);
       
-                var result = await signInManager.CheckPasswordSignInAsync(user, logInDto.Password, false);
+                var result = await _signInManager.CheckPasswordSignInAsync(user, logInDto.Password, false);
             if (result.Succeeded)
             {
                 UserTokenInfoDTO userTokenInfo = new UserTokenInfoDTO
@@ -104,8 +92,6 @@ namespace Oasis.BL.Services
             {
                 return null;
             }
-           
-
         }
 
         public async Task<string> UserRegistration(UserRegistrationDto userDto)
@@ -117,7 +103,7 @@ namespace Oasis.BL.Services
                 PhoneNumber = userDto.PhoneNumber
             };
        
-                var result = await userManager.CreateAsync(user, userDto.Password);
+                var result = await _userManager.CreateAsync(user, userDto.Password);
                 if (result.Succeeded)
                 {
                     UserLogInDto userLogIn = new UserLogInDto

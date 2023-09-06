@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Oasis.BL.DTOs.HttpClientCore
 {
     public class LiveToDoDto

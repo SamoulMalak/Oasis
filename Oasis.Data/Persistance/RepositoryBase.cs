@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Oasis.Data.IPersistance;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Oasis.Data.Persistance
 {
@@ -116,9 +112,6 @@ namespace Oasis.Data.Persistance
                 dbSet.Remove(obj);
         }
 
-        /// <summary>
-        /// Gets a table with "no tracking" enabled (EF feature) Use it only when you load record(s) only for read-only operations
-        /// </summary>
         public virtual IQueryable<T> TableNoTracking
         {
             get

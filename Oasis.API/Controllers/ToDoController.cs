@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Oasis.BL.DTOs.ToDoDto;
 using Oasis.BL.IServices;
@@ -14,17 +11,17 @@ namespace Oasis.API.Controllers
     [Authorize]
     public class ToDoController : ControllerBase
     {
-        private readonly IToDoServices toDoServices;
+        private readonly IToDoServices _toDoServices;
 
         public ToDoController(IToDoServices toDoServices)
         {
-            this.toDoServices = toDoServices;
+            _toDoServices = toDoServices;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateToDoAsync(CreateToDoDto item)
         {
-           var result = await toDoServices.CreateToDoAsync(item);
+           var result = await _toDoServices.CreateToDoAsync(item);
             if (result)
             {
                 return Ok();
@@ -35,7 +32,7 @@ namespace Oasis.API.Controllers
         [HttpGet("{Id:int}")]
         public IActionResult GetToDoById(int Id)
         {
-           ViewToDoDto item= toDoServices.GetToDoItemById(Id);
+           ViewToDoDto item= _toDoServices.GetToDoItemById(Id);
             if (item!=null)
             {
                 return Ok(item);
@@ -46,7 +43,7 @@ namespace Oasis.API.Controllers
         [HttpPut("{itemId:int}")]
         public IActionResult UpdateToDoItem([FromBody] UpdateToDoDto updateItem)
         {
-            bool result = toDoServices.UpdateToDoItem(updateItem);
+            bool result = _toDoServices.UpdateToDoItem(updateItem);
             if (result) 
             {
                 return Ok(updateItem);
@@ -58,7 +55,7 @@ namespace Oasis.API.Controllers
         [HttpDelete("{Id:int}")]
         public IActionResult DeleteToDoItem(int Id)
         {
-            bool result =toDoServices.DeleteToDo(Id);
+            bool result =_toDoServices.DeleteToDo(Id);
             if (result) 
             {
                 return Ok();

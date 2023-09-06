@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Oasis.Data.Persistance
 {
@@ -30,7 +26,7 @@ namespace Oasis.Data.Persistance
             isDisposed = true;
         }
 
-        // Ovveride this to dispose custom objects
+ 
         protected virtual void DisposeCore()
         {
         }
