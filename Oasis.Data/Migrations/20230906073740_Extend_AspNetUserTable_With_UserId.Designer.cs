@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oasis.Data;
 
@@ -11,9 +12,10 @@ using Oasis.Data;
 namespace Oasis.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230906073740_Extend_AspNetUserTable_With_UserId")]
+    partial class Extend_AspNetUserTable_With_UserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,7 +178,7 @@ namespace Oasis.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ToDos");
+                    b.ToTable("ToDo");
                 });
 
             modelBuilder.Entity("Oasis.Data.Entities.UserTable", b =>

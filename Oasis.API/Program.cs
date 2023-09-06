@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Oasis.BL.IServices;
 using Oasis.BL.Services;
 using Oasis.Data;
+using Oasis.Data.Entities;
 using System.Text;
 
 namespace Oasis.API
@@ -22,13 +24,13 @@ namespace Oasis.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            //add
+            //add DB context
             builder.Services.AddDbContext<DataContext>
               (
               option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
               );
 
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+            builder.Services.AddIdentity<UserTable, IdentityRole>()
             .AddEntityFrameworkStores<DataContext>()
             .AddDefaultTokenProviders();
 
@@ -38,15 +40,25 @@ namespace Oasis.API
             //register Account Services 
             builder.Services.AddScoped<IAccountServices, AccountServices>();
 
+            //register  ToDoServices 
+            builder.Services.AddScoped<IToDoServices, ToDoServices>();
+            
+            // register fluent validation services in all assembly 
+            builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+            //register autoMapper in all assembly 
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // add authentication 
             builder.Services.AddAuthentication(options=>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            }).AddJwtBearer(option =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
+                option.SaveToken = true;
+                option.RequireHttpsMetadata = false;
+                option.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
@@ -64,7 +76,7 @@ namespace Oasis.API
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod();
+                    policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin(); ;
                 });
             });
 
@@ -88,6 +100,7 @@ namespace Oasis.API
             app.UseHttpsRedirection();
 
             app.UseCors("CorsPolicy");
+            app.UseRouting();
             app.UseAuthentication();
 
             app.UseAuthorization();

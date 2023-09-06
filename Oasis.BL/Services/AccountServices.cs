@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Oasis.BL.DTOs.AccountDto;
 using Oasis.BL.DTOs.UserTokenInfo;
 using Oasis.BL.IServices;
+using Oasis.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,12 +19,12 @@ namespace Oasis.BL.Services
     public class AccountServices : IAccountServices
     {
         private readonly IConfiguration configuration;
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<UserTable> userManager;
+        private readonly SignInManager<UserTable> signInManager;
 
         public AccountServices(IConfiguration configuration,
-                               UserManager<IdentityUser> userManager,
-                               SignInManager<IdentityUser> signInManager)
+                               UserManager<UserTable> userManager,
+                               SignInManager<UserTable> signInManager)
         {
             this.configuration = configuration;
             this.userManager = userManager;
@@ -85,20 +86,25 @@ namespace Oasis.BL.Services
             var user = await userManager.FindByEmailAsync(logInDto.Email);
       
                 var result = await signInManager.CheckPasswordSignInAsync(user, logInDto.Password, false);
+            if (result.Succeeded)
+            {
                 UserTokenInfoDTO userTokenInfo = new UserTokenInfoDTO
                 {
                     UserName = user.UserName,
                     UserEmail = user.Email
                 };
-               string token = CreateToken(userTokenInfo);
-            return token;
+                string token = CreateToken(userTokenInfo);
+                return token;
+            }
+            else
+                return null;
            
 
         }
 
         public async Task<string> UserRegistration(UserRegistrationDto userDto)
         {
-            var user = new IdentityUser
+            var user = new UserTable
             {
                 UserName = userDto.UserName,
                 Email = userDto.Email,

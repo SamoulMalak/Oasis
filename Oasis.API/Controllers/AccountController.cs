@@ -39,7 +39,11 @@ namespace Oasis.API.Controllers
             if (userLogIn != null)
             {
                 string token = await accountServices.UserLogInAsync(userLogIn);
-                return Ok(token);
+                if (!string.IsNullOrEmpty(token))
+                {
+                    return Ok(token);
+                }
+                return Unauthorized();
             }
             return Unauthorized();
         }
