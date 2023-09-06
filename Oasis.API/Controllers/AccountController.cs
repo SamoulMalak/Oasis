@@ -15,27 +15,9 @@ namespace Oasis.API.Controllers
         {
             this.accountServices = accountServices;
         }
-        [HttpGet]
-        public IActionResult Regiseration22(UserRegistrationDto userRegistrationDto)
-        {
-            if (userRegistrationDto != null)
-            {
-               var token= accountServices.UserRegistration(userRegistrationDto);
-                if (token != null) 
-                {
-                    return Ok(token);
-                }
-                else 
-                { 
-                    return BadRequest(); 
-                }
-            }
-            return BadRequest();
-
-        }
 
 
-        [HttpPost]
+        [HttpPost("regiseration")]
         public async Task<IActionResult> Regiseration(UserRegistrationDto userRegistrationDto)
         {
             if (userRegistrationDto != null)
@@ -48,6 +30,18 @@ namespace Oasis.API.Controllers
             }
 
             return BadRequest();
+        }
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LogIn(UserLogInDto userLogIn)
+        {
+            if (userLogIn != null)
+            {
+                string token = await accountServices.UserLogInAsync(userLogIn);
+                return Ok(token);
+            }
+            return Unauthorized();
         }
     }
 }

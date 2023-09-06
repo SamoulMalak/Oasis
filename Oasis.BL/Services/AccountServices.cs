@@ -51,8 +51,7 @@ namespace Oasis.BL.Services
 
         public string CreateToken(UserTokenInfoDTO userTokenInfo)
         {
-            try
-            {
+           
                 var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email,userTokenInfo.UserEmail),
@@ -73,34 +72,13 @@ namespace Oasis.BL.Services
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 return tokenHandler.WriteToken(token);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception or handle it as per your requirement
+            
+            
                 return null;
-            }
+            
         }
 
-        //public string CreateToken(UserTokenInfoDTO userTokenInfo)
-        //{
-        //    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-        //    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        //    var claims = new[]
-        //    {
-        //        new Claim(ClaimTypes.NameIdentifier,userTokenInfo.UserName),
-        //        new Claim(ClaimTypes.Email,userTokenInfo.UserEmail)
-        //    };
-        //    var token = new JwtSecurityToken(configuration["Jwt:Issuer"],
-        //        configuration["Jwt:Audience"],
-        //        claims,
-        //        expires: DateTime.Now.AddHours(1),
-        //        signingCredentials: credentials);
-
-
-
-
-        //    return new JwtSecurityTokenHandler().WriteToken(token);
-        //}
+      
 
         public async Task<string> UserLogInAsync(UserLogInDto logInDto)
         {
@@ -126,8 +104,7 @@ namespace Oasis.BL.Services
                 Email = userDto.Email,
                 PhoneNumber = userDto.PhoneNumber
             };
-            try
-            {
+       
                 var result = await userManager.CreateAsync(user, userDto.Password);
                 if (result.Succeeded)
                 {
@@ -139,11 +116,7 @@ namespace Oasis.BL.Services
                     var token = await UserLogInAsync(userLogIn);
                     return token;
                 }
-            }
-            catch (Exception ex) 
-            {
-                var x =ex.Message;
-            }
+  
           
             return string.Empty;
         }
