@@ -1,6 +1,5 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -57,6 +56,8 @@ namespace Oasis.API
             //register autoMapper in all assembly 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddHttpContextAccessor();
+
             // add authentication 
             builder.Services.AddAuthentication(options=>
             {
@@ -98,7 +99,7 @@ namespace Oasis.API
                 app.UseSwaggerUI(
                     c =>
                     {
-                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
+                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Oasis Task");
                         c.RoutePrefix = "swagger";
                     });
 

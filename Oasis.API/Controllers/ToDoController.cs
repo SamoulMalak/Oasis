@@ -40,7 +40,7 @@ namespace Oasis.API.Controllers
             return NotFound();
         }
 
-        [HttpPut("{itemId:int}")]
+        [HttpPut()]
         public IActionResult UpdateToDoItem([FromBody] UpdateToDoDto updateItem)
         {
             bool result = _toDoServices.UpdateToDoItem(updateItem);

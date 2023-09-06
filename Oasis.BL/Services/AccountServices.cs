@@ -48,7 +48,8 @@ namespace Oasis.BL.Services
             var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email,userTokenInfo.UserEmail),
-            new Claim(ClaimTypes.Name, userTokenInfo.UserName)
+            new Claim(ClaimTypes.Name, userTokenInfo.UserName),
+            new Claim("UserId", userTokenInfo.UserId.ToString()),
         };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -81,7 +82,8 @@ namespace Oasis.BL.Services
                 UserTokenInfoDTO userTokenInfo = new UserTokenInfoDTO
                 {
                     UserName = user.UserName,
-                    UserEmail = user.Email
+                    UserEmail = user.Email,
+                    UserId=user.UserId
                 };
                 string token = CreateToken(userTokenInfo);
 

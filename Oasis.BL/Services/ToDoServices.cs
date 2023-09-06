@@ -8,7 +8,7 @@ using Oasis.Data;
 using Oasis.Data.Entities;
 using Oasis.Data.IPersistance;
 using Oasis.Data.IRepositories;
-
+using System.Security.Claims;
 
 namespace Oasis.BL.Services
 {
@@ -36,19 +36,14 @@ namespace Oasis.BL.Services
             _toDoRepository = toDoRepository;
             _httpContextAccessor = httpContextAccessor;
         }
-        [Authorize]
+        
         public async Task<bool> CreateToDoAsync(CreateToDoDto toDoitem)
         {
             try
             {
                 var EntityItem = _mapper.Map<ToDo>(toDoitem);
-                //
-
-                //
-                // get current user to get UserId column and put in ToDoEntity 
-                var CurrentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                // this line will be edit in feature 
-                EntityItem.UserId = CurrentUser.UserId;
+                var UserIdForCurrentUser = _httpContextAccessor.HttpContext.User.FindFirstValue("UserId");
+                EntityItem.UserId = int.Parse(UserIdForCurrentUser);
 
                 _toDoRepository.Add(EntityItem);
                 _unitOfWork.SaveChanges();
